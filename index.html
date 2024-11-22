@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auroville Network Topics</title>
+    <link rel="stylesheet" href="/public/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+        const headers = new Headers({
+            'Api-Key': 'ccdc6a38760db1b4e42f39d4020c404b9f5a2a3b2f12fab87ac9dfc2de33202d',
+            'Api-Username': 'system'
+        });
+
+        const requestOptions = {
+            method: 'GET',
+            headers: headers,
+            mode: 'cors'
+        };
+    </script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Latest Topics from Auroville Network</h1>
+        </div>
+    </header>
+    <main class="container">
+        <div id="latestTopics"></div>
+    </main>
+<script>
+    async function fetchLatestTopics() {
+        const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+        const targetUrl = 'https://aurovillenetwork.org/latest.json';
+        
+        try {
+            const response = await fetch(proxyUrl + targetUrl, {
+                method: 'GET',
+                headers: {
+                    'Api-Key': 'ccdc6a38760db1b4e42f39d4020c404b9f5a2a3b2f12fab87ac9dfc2de33202d',
+                    'Api-Username': 'system',
+                    'Origin': 'http://community.aurovillenetwork.org'
+                }
+            });
+            
+            const data = await response.json();
+            const topicsDiv = document.getElementById('latestTopics');
+            
+            data.topic_list.topics.forEach(topic => {
+                const topicDiv = document.createElement('div');
+                topicDiv.className = 'topic';
+                
+                topicDiv.innerHTML = `
+                    <div class="topic-title">
+                        <a href="${topic.url}" target="_blank" rel="noopener">${topic.title}</a>
+                    </div>
+                    <div class="topic-info">
+                        <div class="topic-stats">
+                            <span class="stat">Posted by ${topic.posters[0].description}</span>
+                            <span class="stat">Views: ${topic.views}</span>
+                            <span class="stat">Replies: ${topic.reply_count}</span>
+                        </div>
+                    </div>
+                `;
+                topicsDiv.appendChild(topicDiv);
+            });
+        } catch (error) {
+            console.log('Error fetching topics:', error);
+            document.getElementById('latestTopics').innerHTML = 'Error loading topics. Please try again later.';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', fetchLatestTopics);
+</script>
